@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#16241F">
+<title>Wayfare — Tourism Management System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ============ AUTH SCREEN ============ -->
+<section id="auth-screen" class="auth-screen">
+  <div class="auth-panel">
+    <div class="auth-brand">
+      <span class="stamp-mark">W</span>
+      <div class="auth-brand-text">
+        <strong>Wayfare</strong>
+        <span>Tourism Management System</span>
+      </div>
+    </div>
+
+    <div class="auth-copy">
+      <p class="ticket-code">TMS · PROTOTYPE BUILD</p>
+      <h1>Plan the trip.<br>Book the ticket.<br>Skip the chaos.</h1>
+      <p class="auth-lede">One system connecting tourists, travel agents and admins — search destinations, build an itinerary and confirm bookings in one place.</p>
+    </div>
+
+    <div class="role-picker" role="tablist" aria-label="Choose account type">
+      <button class="role-tab active" data-role="tourist" type="button">Tourist</button>
+      <button class="role-tab" data-role="agent" type="button">Travel Agent</button>
+      <button class="role-tab" data-role="admin" type="button">Admin</button>
+    </div>
+
+    <!-- Tourist login: phone + OTP -->
+    <form id="form-tourist" class="auth-form" data-role-form="tourist">
+      <label class="field">
+        <span>Phone number</span>
+        <input type="tel" id="tourist-phone" placeholder="98xxxxxxxx" required>
+      </label>
+
+      <div id="tourist-otp-wrap" class="field" hidden>
+        <span>Verification code <small>(any 4 digits — prototype)</small></span>
+        <input type="text" id="tourist-otp" maxlength="4" placeholder="0000" inputmode="numeric">
+      </div>
+
+      <label class="field">
+        <span>Your name</span>
+        <input type="text" id="tourist-name" placeholder="e.g. Aaryan Vishwakarma" required>
+      </label>
+
+      <button type="button" id="tourist-send-otp" class="btn btn-primary">Send OTP</button>
+      <button type="submit" id="tourist-continue" class="btn btn-primary" hidden>Continue as tourist</button>
+    </form>
+
+    <!-- Agent / Admin login: email + password -->
+    <form id="form-staff" class="auth-form" data-role-form="agent admin" hidden>
+      <label class="field">
+        <span>Staff name</span>
+        <input type="text" id="staff-name" placeholder="e.g. Swanit Bhawar" required>
+      </label>
+      <label class="field">
+        <span>Work email</span>
+        <input type="email" id="staff-email" placeholder="you@wayfare.com" required>
+      </label>
+      <label class="field">
+        <span>Password</span>
+        <input type="password" id="staff-password" placeholder="••••••••" required>
+      </label>
+      <button type="submit" class="btn btn-primary">Sign in</button>
+    </form>
+
+    <p class="auth-footnote">Prototype build — authentication is simulated, no real OTP or credentials are sent. See SRS §7.2 for the intended production security model.</p>
+  </div>
+
+  <div class="auth-visual" aria-hidden="true">
+    <div class="passport-stack">
+      <div class="postcard postcard-1">
+        <span class="postcard-stamp">GOA</span>
+        <span class="postcard-line"></span>
+        <span class="postcard-line short"></span>
+      </div>
+      <div class="postcard postcard-2">
+        <span class="postcard-stamp">LADAKH</span>
+        <span class="postcard-line"></span>
+        <span class="postcard-line short"></span>
+      </div>
+      <div class="postcard postcard-3">
+        <span class="postcard-stamp">KERALA</span>
+        <span class="postcard-line"></span>
+        <span class="postcard-line short"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ APP SHELL ============ -->
+<div id="app-shell" class="app-shell" hidden>
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="stamp-mark small">W</span>
+      <strong class="brand-word">Wayfare</strong>
+    </div>
+
+    <nav class="topnav" id="topnav" aria-label="Primary">
+      <!-- injected per role -->
+    </nav>
+
+    <div class="topbar-right">
+      <div class="notif-wrap">
+        <button id="notif-bell" class="icon-btn" type="button" aria-label="Notifications">
+          🔔<span id="notif-count" class="notif-count" hidden>0</span>
+        </button>
+        <div id="notif-panel" class="notif-panel" hidden>
+          <div class="notif-panel-head">Notifications</div>
+          <ul id="notif-list" class="notif-list"></ul>
+        </div>
+      </div>
+      <div class="user-chip">
+        <span id="current-user-name">—</span>
+        <span id="current-user-role" class="user-role-badge">—</span>
+      </div>
+      <button id="logout-btn" class="btn btn-ghost" type="button">Log out</button>
+    </div>
+  </header>
+
+  <main class="main-area">
+
+    <!-- ===== TOURIST: EXPLORE ===== -->
+    <section id="view-explore" class="view">
+      <div class="boarding-pass">
+        <div class="bp-main">
+          <p class="ticket-code">SEARCH DESTINATIONS</p>
+          <h2>Where to next?</h2>
+          <div class="search-row">
+            <label class="field">
+              <span>Destination</span>
+              <input type="text" id="search-destination" placeholder="Try “Goa” or “mountains”">
+            </label>
+            <label class="field">
+              <span>Duration</span>
+              <select id="search-duration">
+                <option value="">Any</option>
+                <option value="short">2–3 days</option>
+                <option value="mid">4–5 days</option>
+                <option value="long">6+ days</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Max budget: ₹<output id="budget-output">50000</output></span>
+              <input type="range" id="search-budget" min="5000" max="80000" step="1000" value="50000">
+            </label>
+          </div>
+          <div class="interest-chips" id="interest-chips">
+            <button class="chip" data-interest="beach" type="button">Beach</button>
+            <button class="chip" data-interest="mountains" type="button">Mountains</button>
+            <button class="chip" data-interest="heritage" type="button">Heritage</button>
+            <button class="chip" data-interest="wildlife" type="button">Wildlife</button>
+            <button class="chip" data-interest="adventure" type="button">Adventure</button>
+            <button class="chip" data-interest="spiritual" type="button">Spiritual</button>
+          </div>
+        </div>
+        <div class="bp-stub">
+          <span class="stub-label">Results</span>
+          <strong id="results-count">0</strong>
+          <span class="stub-label">packages found</span>
+        </div>
+      </div>
+
+      <div id="destination-grid" class="destination-grid"></div>
+    </section>
+
+    <!-- ===== TOURIST: PACKAGE DETAIL ===== -->
+    <section id="view-package" class="view" hidden>
+      <button class="back-link" id="back-to-explore" type="button">← Back to search</button>
+      <div id="package-detail" class="package-detail"></div>
+    </section>
+
+    <!-- ===== TOURIST: MY TRIPS ===== -->
+    <section id="view-trips" class="view" hidden>
+      <p class="ticket-code">MY TRIPS</p>
+      <h2>Your bookings</h2>
+      <div id="trips-list" class="trips-list"></div>
+    </section>
+
+    <!-- ===== AGENT: MANAGE PACKAGES ===== -->
+    <section id="view-agent-packages" class="view" hidden>
+      <p class="ticket-code">TRAVEL AGENT</p>
+      <div class="view-header-row">
+        <h2>Manage packages</h2>
+        <button id="new-package-btn" class="btn btn-primary" type="button">+ New package</button>
+      </div>
+      <div id="agent-package-form-wrap" hidden></div>
+      <div id="agent-package-table" class="agent-table"></div>
+    </section>
+
+    <!-- ===== AGENT: CONFIRM BOOKINGS ===== -->
+    <section id="view-agent-bookings" class="view" hidden>
+      <p class="ticket-code">TRAVEL AGENT</p>
+      <h2>Booking requests</h2>
+      <div id="agent-bookings-list" class="trips-list"></div>
+    </section>
+
+    <!-- ===== ADMIN: USERS ===== -->
+    <section id="view-admin-users" class="view" hidden>
+      <p class="ticket-code">ADMIN</p>
+      <h2>Manage users</h2>
+      <div id="admin-users-table" class="agent-table"></div>
+    </section>
+
+    <!-- ===== ADMIN: REPORTS ===== -->
+    <section id="view-admin-reports" class="view" hidden>
+      <p class="ticket-code">ADMIN</p>
+      <h2>Reports</h2>
+      <div id="report-stats" class="report-stats"></div>
+      <div class="report-chart-card">
+        <h3>Bookings by destination</h3>
+        <div id="report-chart" class="report-chart"></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div id="toast" class="toast" hidden></div>
+
+<script src="app.js"></script>
+</body>
+</html>
